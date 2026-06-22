@@ -15,6 +15,8 @@ interface OrdersScreenProps {
   onDeclineOrder: (orderId: string) => void;
   onOpenMenu?: () => void;
   initialTab?: "new" | "active" | "completed";
+  onToggleNotifications: () => void;
+  unreadNotificationsCount: number;
 }
 
 export default function OrdersScreen({
@@ -25,6 +27,8 @@ export default function OrdersScreen({
   onDeclineOrder,
   onOpenMenu,
   initialTab = "new",
+  onToggleNotifications,
+  unreadNotificationsCount,
 }: OrdersScreenProps) {
   const [activeTab, setActiveTab] = useState<"new" | "active" | "completed">(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,13 +117,14 @@ export default function OrdersScreen({
         </div>
         <div className="flex items-center">
           <button
-            onClick={() => alert("Ready. Status is normal.")}
-            className="hover:bg-white/10 p-2 rounded-full relative cursor-pointer"
+            onClick={onToggleNotifications}
+            className="hover:bg-white/10 p-2 rounded-full relative cursor-pointer text-white border-none bg-transparent"
+            aria-label="View notifications"
           >
-            <Bell className="w-5 h-5" />
-            {newOrders.length > 0 && (
-              <span className="absolute top-1.5 right-1.5 bg-[#ba1a1a] text-[9px] text-white w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                {newOrders.length}
+            <Bell className="w-5 h-5 text-white" />
+            {unreadNotificationsCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-[#ba1a1a] text-[8px] text-white w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold border border-rose-900 shadow-sm">
+                {unreadNotificationsCount}
               </span>
             )}
           </button>

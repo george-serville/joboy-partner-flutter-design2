@@ -497,25 +497,147 @@ export default function OrderDetailScreen({
             </div>
 
             {/* Simulated Map */}
-            <div className="relative h-32 bg-sky-50 rounded-lg overflow-hidden border border-zinc-150">
-              <img
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=500&q=80"
-                alt="Navigation directions map blueprint"
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <button
-                onClick={() => {
-                  setIsTravelling(true);
-                  alert(`Directing you on real-time interactive route via Kochi Bypass to: ${order.locationName}`);
-                }}
-                className="absolute bottom-2.5 right-2.5 bg-[#14A5FF] text-white text-[10px] font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow-sm active:scale-95 duration-100 cursor-pointer border-none"
-              >
-                <svg className="w-3.5 h-3.5 fill-current text-white shrink-0" viewBox="0 0 24 24">
-                  <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
-                </svg>
-                NAVIGATE
-              </button>
+            <div className="space-y-1.5">
+              <div className="relative h-48 bg-slate-50 rounded-xl overflow-hidden border border-zinc-200 shadow-inner flex flex-col justify-between">
+                
+                {/* SVG Visual Map Grid */}
+                <div className="absolute inset-0 z-0">
+                  <svg className="w-full h-full bg-[#f4f3f0]" viewBox="0 0 320 192" preserveAspectRatio="none">
+                    {/* Background Grid Pattern */}
+                    <defs>
+                      <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse">
+                        <path d="M 16 0 L 0 0 0 16" fill="none" stroke="rgba(0,0,0,0.03)" strokeWidth="1" />
+                      </pattern>
+                      <style>
+                        {`
+                          @keyframes dash {
+                            to {
+                              stroke-dashoffset: -40;
+                            }
+                          }
+                        `}
+                      </style>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+
+                    {/* Waterbody representation (Periyar stream/Kochi backwaters block) */}
+                    <path
+                      d="M -10,35 Q 80,45 130,20 T 330,10 L 330,-10 L -10,-10 Z"
+                      fill="#e0f2fe"
+                      stroke="#bae6fd"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Green municipal parks */}
+                    <rect x="25" y="60" width="50" height="28" rx="4" fill="#f0fdf4" stroke="#dcfce7" strokeWidth="1" />
+                    <text x="50" y="76" fill="#15803d" className="text-[7px] font-bold font-sans" textAnchor="middle">Kochi Green</text>
+
+                    <rect x="220" y="115" width="55" height="22" rx="4" fill="#f0fdf4" stroke="#dcfce7" strokeWidth="1" />
+                    <text x="247" y="128" fill="#15803d" className="text-[7px] font-bold font-sans" textAnchor="middle">Eco Zone</text>
+
+                    {/* Stylized Kochi Arterial Roads */}
+                    {/* Kochi Bypass */}
+                    <path d="M 30,192 C 100,120 180,72 280,-10" fill="none" stroke="#e2e8f0" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M 30,192 C 100,120 180,72 280,-10" fill="none" stroke="#cbd5e1" strokeWidth="5" strokeLinecap="round" />
+                    <path d="M 30,192 C 100,120 180,72 280,-10" fill="none" stroke="#eaeaea" strokeDasharray="4,4" strokeWidth="1.5" strokeLinecap="round" />
+
+                    {/* Secondary Cross Streets */}
+                    <line x1="10" y1="120" x2="310" y2="150" stroke="#f1f5f9" strokeWidth="4.5" />
+                    <line x1="120" y1="192" x2="160" y2="-10" stroke="#f1f5f9" strokeWidth="4.5" />
+                    <line x1="240" y1="192" x2="280" y2="-10" stroke="#f1f5f9" strokeWidth="4" />
+
+                    {/* Active Transit Route from Partner location (approx 60, 140) to Customer Location (approx 220, 80) */}
+                    <path
+                      d="M 60,140 Q 140,145 162,112 T 220,80"
+                      fill="none"
+                      stroke="#7dd3fc"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M 60,140 Q 140,145 162,112 T 220,80"
+                      fill="none"
+                      stroke="#0284c7"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeDasharray="5,5"
+                      style={{ animation: "dash 5s linear infinite" }}
+                    />
+
+                    {/* Partner Pin location (Your Starting Node) */}
+                    <g transform="translate(60, 140)">
+                      <circle r="10" fill="#0284c7" fillOpacity="0.15" />
+                      <circle r="6" fill="#0284c7" fillOpacity="0.35" className="animate-ping" stroke="#0284c7" strokeWidth="1" />
+                      <circle r="4" fill="#0284c7" stroke="#ffffff" strokeWidth="1.5" />
+                      <text y="-8" fill="#0284c7" className="text-[7px] font-black font-mono tracking-tight" textAnchor="middle">YOU</text>
+                    </g>
+
+                    {/* Customer Location Pin (End Point Destination) */}
+                    <g transform="translate(220, 80)">
+                      {/* Bouncing-effect ring around target */}
+                      <circle r="12" fill="#ef4444" fillOpacity="0.1" className="animate-pulse" />
+                      <path
+                        d="M 0,0 C -3,-3 -6,-6 -6,-10 C -6,-14 -3,-17 0,-17 C 3,-17 6,-14 6,-10 C 6,-6 3,-3 0,0"
+                        fill="#ef4444"
+                        stroke="#ffffff"
+                        strokeWidth="1"
+                      />
+                      <circle cy="-10" r="2.5" fill="#ffffff" />
+                      <text y="-20" fill="#dc2626" className="text-[7px] font-black font-headline tracking-tighter" textAnchor="middle">
+                        {order.clientName.toUpperCase()}
+                      </text>
+                    </g>
+
+                    {/* Key Landmark labels based on client Zone */}
+                    <text x="145" y="165" fill="#64748b" className="text-[6px] font-bold font-sans italic">Joboy Transit Route</text>
+                    <text x="190" y="48" fill="#64748b" className="text-[6px] font-bold font-sans text-right">
+                      {order.locationName.includes("Kakkanad") ? "Infopark Tech Sector" : order.locationName.includes("Edappally") ? "Lulu Transit Zone" : "Kochi Metro Corridor"}
+                    </text>
+                  </svg>
+                </div>
+
+                {/* Satellite overlay pill or map zoom controls */}
+                <div className="absolute top-2 left-2 z-10 flex gap-1.5">
+                  <span className="bg-slate-900/80 backdrop-blur-xs text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider font-mono">
+                    Static Vector GPS
+                  </span>
+                  <span className="bg-[#e0f2fe] text-sky-800 text-[8px] font-extrabold px-1.5 py-0.5 rounded-md border border-sky-150">
+                    Auto-Fit Zoom
+                  </span>
+                </div>
+
+                {/* Estimated Transit metadata overlay at the bottom */}
+                <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-md rounded-lg shadow-sm border border-zinc-150 p-2 z-10 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1 px-1.5 rounded bg-emerald-50 text-emerald-800 text-[10px] font-extrabold flex flex-col items-center leading-none justify-center">
+                      <span>{Math.round((parseFloat(order.distance) || 4) * 2.5 + 4)}</span>
+                      <span className="text-[6px] font-black tracking-tight mt-0.5 uppercase">MINS</span>
+                    </div>
+                    <div className="text-left leading-tight">
+                      <p className="text-[10px] font-bold text-slate-800">Route via Cochin Bypass</p>
+                      <p className="text-[8px] text-zinc-500 font-semibold uppercase tracking-wider">
+                        Distance: {order.distance} • Traffic: Smooth
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setIsTravelling(true);
+                      alert(`Directing you on real-time interactive route via Kochi Bypass to: ${order.locationName}`);
+                    }}
+                    className="bg-[#14A5FF] hover:bg-[#118fdc] text-white text-[9px] font-black px-2.5 py-1.5 rounded-md flex items-center gap-1 shadow-sm active:scale-95 duration-100 cursor-pointer border-none"
+                  >
+                    <svg className="w-3 h-3 fill-current text-white shrink-0" viewBox="0 0 24 24">
+                      <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
+                    </svg>
+                    NAVIGATE
+                  </button>
+                </div>
+              </div>
+              <p className="text-[10px] text-zinc-400 font-medium pl-1 italic">
+                Visualize route: Blue represents your starting point, red represents {order.clientName}'s service hub.
+              </p>
             </div>
 
             <div className="flex items-start gap-2.5 text-xs text-slate-600 font-medium pt-1">

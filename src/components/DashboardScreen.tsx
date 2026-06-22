@@ -29,6 +29,8 @@ interface DashboardScreenProps {
   onNavigate: (screen: Screen, tab?: "new" | "active" | "completed") => void;
   onOpenMenu: () => void;
   onSelectOrderDetail: (orderId: string) => void;
+  onToggleNotifications: () => void;
+  unreadNotificationsCount: number;
 }
 
 export default function DashboardScreen({
@@ -38,9 +40,10 @@ export default function DashboardScreen({
   onNavigate,
   onOpenMenu,
   onSelectOrderDetail,
+  onToggleNotifications,
+  unreadNotificationsCount,
 }: DashboardScreenProps) {
   const [isAvailable, setIsAvailable] = useState(true);
-  const [showNotification, setShowNotification] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [supportMessage, setSupportMessage] = useState("");
@@ -107,36 +110,17 @@ export default function DashboardScreen({
         
         <div className="relative">
           <button
-            onClick={() => setShowNotification(!showNotification)}
+            onClick={onToggleNotifications}
             className="hover:bg-white/10 p-2 rounded-full transition-all active:scale-95 cursor-pointer relative border-none bg-transparent"
             aria-label="View notifications"
           >
             <Bell className="w-6 h-6 text-white" />
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-sky-500" />
+            {unreadNotificationsCount > 0 && (
+              <span className="absolute top-1 right-1 bg-red-500 text-[9px] text-white w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold border border-[#14A5FF]">
+                {unreadNotificationsCount}
+              </span>
+            )}
           </button>
-
-          {/* Toast / Notification dropdown overlay */}
-          {showNotification && (
-            <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-zinc-200 py-3 z-50 text-slate-800 animate-in fade-in slide-in-from-top-3">
-              <div className="flex items-center justify-between px-4 pb-2 border-b border-zinc-100">
-                <span className="font-bold text-xs text-zinc-500 uppercase tracking-widest">Joboy Updates</span>
-                <button 
-                  onClick={() => setShowNotification(false)}
-                  className="text-zinc-400 hover:text-zinc-600 text-xs font-bold bg-transparent border-none cursor-pointer"
-                >
-                  Clear
-                </button>
-              </div>
-              <div className="divide-y divide-zinc-50 max-h-64 overflow-y-auto">
-                {notifications.map((n) => (
-                  <div key={n.id} className="p-3 hover:bg-slate-50 transition-colors">
-                    <p className="text-xs text-slate-800 font-medium">{n.text}</p>
-                    <span className="text-[10px] text-zinc-400 font-semibold">{n.time}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
