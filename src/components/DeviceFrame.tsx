@@ -119,7 +119,7 @@ export default function DeviceFrame({ children, onResetData }: DeviceFrameProps)
         )}
 
         {/* Dynamic Inner Screens content frame */}
-        <div className="flex-grow overflow-y-auto overflow-x-hidden scroll-hide relative">
+        <div className="flex-grow flex flex-col min-h-0 relative overflow-hidden">
           {children}
         </div>
 

@@ -26,7 +26,7 @@ interface DashboardScreenProps {
   orders: Order[];
   profile: PartnerProfile;
   totalEarnings: number;
-  onNavigate: (screen: Screen) => void;
+  onNavigate: (screen: Screen, tab?: "new" | "active" | "completed") => void;
   onOpenMenu: () => void;
   onSelectOrderDetail: (orderId: string) => void;
 }
@@ -207,6 +207,68 @@ export default function DashboardScreen({
           </div>
         </div>
       </div>
+
+      {/* Dynamic Job Queue Shortcuts */}
+      <section className="mx-4 mb-4 bg-white p-4 rounded-2xl border border-zinc-150 shadow-xs space-y-3">
+        <h3 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest pl-1">
+          Job Categories
+        </h3>
+        <div className="grid grid-cols-3 gap-3">
+          {/* New / Pending Jobs Shortcut */}
+          <button
+            onClick={() => onNavigate(Screen.ORDERS, "new")}
+            className="flex flex-col items-center justify-center p-3 rounded-xl border border-sky-100 bg-sky-50/40 hover:bg-sky-50 cursor-pointer text-center group transition-all border-none"
+          >
+            <div className="w-10 h-10 rounded-full bg-sky-100 text-[#14A5FF] flex items-center justify-center mb-2 shrink-0 group-hover:scale-105 transition-transform font-bold text-xs">
+              <span className="relative flex h-5 w-5 justify-center items-center">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-5 w-5 bg-sky-500 text-white text-[10px] items-center justify-center font-bold">
+                  {orders.filter(o => o.status === OrderStatus.NEW).length}
+                </span>
+              </span>
+            </div>
+            <span className="text-xs font-black text-slate-800">New</span>
+            <span className="text-[8px] text-zinc-400 font-bold uppercase font-mono tracking-wider">Pending</span>
+          </button>
+
+          {/* Active / In-Progress Jobs Shortcut */}
+          <button
+            onClick={() => onNavigate(Screen.ORDERS, "active")}
+            className="flex flex-col items-center justify-center p-3 rounded-xl border border-amber-100 bg-amber-50/40 hover:bg-amber-50 cursor-pointer text-center group transition-all border-none"
+          >
+            <div className="w-10 h-10 rounded-full bg-amber-150 text-amber-600 flex items-center justify-center mb-2 shrink-0 group-hover:scale-105 transition-transform">
+              <svg className="w-5 h-5 text-amber-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <line x1="12" y1="2" x2="12" y2="6"></line>
+                <line x1="12" y1="18" x2="12" y2="22"></line>
+                <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                <line x1="2" y1="12" x2="6" y2="12"></line>
+                <line x1="18" y1="12" x2="22" y2="12"></line>
+                <line x1="6.34" y1="17.66" x2="8.46" y2="15.54"></line>
+                <line x1="15.54" y1="8.46" x2="17.66" y2="6.34"></line>
+              </svg>
+            </div>
+            <span className="text-xs font-black text-slate-800">In Progress</span>
+            <span className="text-[8px] text-amber-600 font-bold uppercase font-mono tracking-wider">
+              {orders.filter(o => o.status === OrderStatus.ACTIVE || o.status === OrderStatus.IN_PROGRESS).length} Active
+            </span>
+          </button>
+
+          {/* Completed / History Jobs Shortcut */}
+          <button
+            onClick={() => onNavigate(Screen.ORDERS, "completed")}
+            className="flex flex-col items-center justify-center p-3 rounded-xl border border-emerald-100 bg-emerald-50/40 hover:bg-emerald-50 cursor-pointer text-center group transition-all border-none"
+          >
+            <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2 shrink-0 group-hover:scale-105 transition-transform">
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
+            </div>
+            <span className="text-xs font-black text-slate-800">Completed</span>
+            <span className="text-[8px] text-emerald-650 font-bold uppercase font-mono tracking-wider">
+              {orders.filter(o => o.status === OrderStatus.COMPLETED).length} Done
+            </span>
+          </button>
+        </div>
+      </section>
 
       {/* Daily Overview Bar Chart section */}
       <section className="mx-4 bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm space-y-4">

@@ -25,8 +25,10 @@ import OrdersScreen from "./components/OrdersScreen";
 import OrderDetailScreen from "./components/OrderDetailScreen";
 import EarningsScreen from "./components/EarningsScreen";
 import DashboardScreen from "./components/DashboardScreen";
+import PrivacyPolicyScreen from "./components/PrivacyPolicyScreen";
+import TermsOfUseScreen from "./components/TermsOfUseScreen";
 
-import { Home, History, User, Menu, X, ClipboardList, LayoutDashboard } from "lucide-react";
+import { Home, History, User, Menu, X, ClipboardList, LayoutDashboard, ShieldCheck, Scale } from "lucide-react";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>(Screen.LOGIN);
@@ -39,6 +41,7 @@ export default function App() {
   const [profile, setProfile] = useState<PartnerProfile | null>(null);
   const [totalEarnings, setTotalEarnings] = useState(48250.0);
   const [selectedOrderId, setSelectedOrderId] = useState<string>("JO-12345");
+  const [ordersTab, setOrdersTab] = useState<"new" | "active" | "completed">("new");
 
   // Local storage caching recovery
   useEffect(() => {
@@ -96,9 +99,12 @@ export default function App() {
   };
 
   // Nav routing handler
-  const handleNavigate = (target: Screen) => {
+  const handleNavigate = (target: Screen, tab?: "new" | "active" | "completed") => {
     setScreen(target);
     localStorage.setItem("joboy_screen", target);
+    if (tab) {
+      setOrdersTab(tab);
+    }
   };
 
   // Login session verification
@@ -291,8 +297,8 @@ export default function App() {
   return (
     <DeviceFrame onResetData={handleResetData}>
       {/* Dynamic Screen Routing Render */}
-      <div className="h-full w-full flex flex-col relative bg-background">
-        <div className="flex-grow">
+      <div className="h-full w-full flex flex-col relative bg-background overflow-hidden">
+        <div className="flex-grow overflow-y-auto min-h-0 relative pb-20">
           {screen === Screen.LOGIN && (
             <LoginScreen
               onNavigate={handleNavigate}
@@ -336,6 +342,7 @@ export default function App() {
             <OrdersScreen
               orders={orders}
               onNavigate={handleNavigate}
+              initialTab={ordersTab}
               onSelectOrderDetail={(id) => {
                 setSelectedOrderId(id);
                 handleNavigate(Screen.ORDER_DETAIL);
@@ -364,6 +371,14 @@ export default function App() {
               onWithdraw={handleWithdraw}
               onOpenMenu={() => setIsMenuOpen(true)}
             />
+          )}
+
+          {screen === Screen.PRIVACY_POLICY && (
+            <PrivacyPolicyScreen onNavigate={handleNavigate} />
+          )}
+
+          {screen === Screen.TERMS_OF_USE && (
+            <TermsOfUseScreen onNavigate={handleNavigate} />
           )}
         </div>
 
@@ -419,7 +434,7 @@ export default function App() {
                     }`}
                   >
                     <LayoutDashboard className="w-4.5 h-4.5" />
-                    <span>Dashboard / Home</span>
+                    <span>Home</span>
                   </button>
 
                   <button
@@ -434,7 +449,7 @@ export default function App() {
                     }`}
                   >
                     <ClipboardList className="w-4.5 h-4.5" />
-                    <span>Order List</span>
+                    <span>Order</span>
                   </button>
 
                   <button
@@ -449,7 +464,7 @@ export default function App() {
                     }`}
                   >
                     <History className="w-4.5 h-4.5" />
-                    <span>payouts & Earnings Ledger</span>
+                    <span>Earnings</span>
                   </button>
 
                   <button
@@ -464,7 +479,37 @@ export default function App() {
                     }`}
                   >
                     <User className="w-4.5 h-4.5" />
-                    <span>My Profile & Details</span>
+                    <span>Profile</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleNavigate(Screen.PRIVACY_POLICY);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-xs font-bold transition-all text-left border-none cursor-pointer outline-none bg-transparent ${
+                      screen === Screen.PRIVACY_POLICY 
+                        ? "bg-primary-container/15 text-primary" 
+                        : "hover:bg-black/5 text-on-surface"
+                    }`}
+                  >
+                    <ShieldCheck className="w-4.5 h-4.5" />
+                    <span>Privacy Policy</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleNavigate(Screen.TERMS_OF_USE);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-xs font-bold transition-all text-left border-none cursor-pointer outline-none bg-transparent ${
+                      screen === Screen.TERMS_OF_USE 
+                        ? "bg-primary-container/15 text-primary" 
+                        : "hover:bg-black/5 text-on-surface"
+                    }`}
+                  >
+                    <Scale className="w-4.5 h-4.5" />
+                    <span>Terms of Use</span>
                   </button>
                 </nav>
               </div>
@@ -503,7 +548,7 @@ export default function App() {
 
         {/* Global Bottom Navigation Tab Bar for authorized sheets */}
         {displayBottomNav && (
-          <nav className="fixed bottom-0 inset-x-0 w-full z-40 flex justify-around items-center px-4 py-3 bg-white border-t border-outline-variant/30 shadow-lg rounded-t-2xl max-w-md mx-auto select-none shrink-0">
+          <nav className="absolute bottom-0 inset-x-0 w-full z-40 flex justify-around items-center px-4 py-3 bg-white border-t border-outline-variant/30 shadow-lg rounded-t-2xl select-none shrink-0">
             {/* Dashboard / Home Tab */}
             <button
               onClick={() => handleNavigate(Screen.DASHBOARD)}
@@ -527,7 +572,7 @@ export default function App() {
               }`}
             >
               <ClipboardList className="w-5.5 h-5.5" strokeWidth={screen === Screen.ORDERS ? 2.5 : 2} />
-              <span className="text-[10px] font-extrabold tracking-wide">Order List</span>
+              <span className="text-[10px] font-extrabold tracking-wide">Orders</span>
             </button>
 
             {/* PROFILE Tab */}

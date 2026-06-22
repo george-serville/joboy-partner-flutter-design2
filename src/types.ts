@@ -11,6 +11,8 @@ export enum Screen {
   ORDERS = "orders",
   ORDER_DETAIL = "order-detail",
   EARNINGS = "earnings",
+  PRIVACY_POLICY = "privacy-policy",
+  TERMS_OF_USE = "terms-of-use",
 }
 
 export enum OrderStatus {

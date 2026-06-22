@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
-import { ArrowLeft, Bell, Map, Phone, Clock, Badge, CheckCircle, Navigation, ExternalLink, CalendarDays, Menu } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ArrowLeft, Bell, Map, Phone, Clock, Badge, CheckCircle, Navigation, ExternalLink, CalendarDays, Menu, Search, X } from "lucide-react";
 import { Screen, Order, OrderStatus } from "../types";
 
 interface OrdersScreenProps {
@@ -14,6 +14,7 @@ interface OrdersScreenProps {
   onAcceptOrder: (orderId: string) => void;
   onDeclineOrder: (orderId: string) => void;
   onOpenMenu?: () => void;
+  initialTab?: "new" | "active" | "completed";
 }
 
 export default function OrdersScreen({
@@ -23,13 +24,33 @@ export default function OrdersScreen({
   onAcceptOrder,
   onDeclineOrder,
   onOpenMenu,
+  initialTab = "new",
 }: OrdersScreenProps) {
-  const [activeTab, setActiveTab] = useState<"new" | "active" | "completed">("new");
+  const [activeTab, setActiveTab] = useState<"new" | "active" | "completed">(initialTab);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter orders by tab
-  const newOrders = orders.filter((o) => o.status === OrderStatus.NEW);
-  const activeOrders = orders.filter((o) => o.status === OrderStatus.ACTIVE || o.status === OrderStatus.IN_PROGRESS);
-  const completedOrders = orders.filter((o) => o.status === OrderStatus.COMPLETED);
+  // Sync state if initialTab prop changes
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
+  // Search filter helper
+  const matchesSearch = (o: Order) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      o.serviceType.toLowerCase().includes(query) ||
+      o.clientName.toLowerCase().includes(query) ||
+      o.id.toLowerCase().includes(query)
+    );
+  };
+
+  // Filter orders by tab and search query
+  const newOrders = orders.filter((o) => o.status === OrderStatus.NEW && matchesSearch(o));
+  const activeOrders = orders.filter((o) => (o.status === OrderStatus.ACTIVE || o.status === OrderStatus.IN_PROGRESS) && matchesSearch(o));
+  const completedOrders = orders.filter((o) => o.status === OrderStatus.COMPLETED && matchesSearch(o));
 
   const getServiceIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -105,6 +126,31 @@ export default function OrdersScreen({
         </div>
       </header>
 
+      {/* Search Bar Segment */}
+      <section className="px-4 py-3 bg-white border-b border-outline-variant/20 shadow-xs">
+        <div className="relative">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+            <Search className="w-4.5 h-4.5 text-zinc-400" />
+          </span>
+          <input
+            type="text"
+            placeholder="Search by service or customer name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-zinc-200 text-xs text-slate-800 focus:outline-none focus:ring-1.5 focus:ring-[#14A5FF] focus:border-[#14A5FF] placeholder-zinc-400 font-medium transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 cursor-pointer text-zinc-400 hover:text-zinc-650 bg-transparent border-none"
+              aria-label="Clear search input"
+            >
+              <X className="w-4.5 h-4.5" />
+            </button>
+          )}
+        </div>
+      </section>
+
       {/* Tabs navigation panel */}
       <section className="sticky top-16 bg-background/95 backdrop-blur-md z-35 py-1 z-30">
         <div className="flex border-b border-outline-variant/30 text-center text-xs font-bold leading-none tracking-wider uppercase">
@@ -148,13 +194,27 @@ export default function OrdersScreen({
           <div className="space-y-4">
             {newOrders.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center opacity-60 space-y-3">
-                <CheckCircle className="w-12 h-12 text-[#006e1c]" />
-                <p className="text-sm font-semibold text-on-surface-variant">
-                  No new pending orders!
-                </p>
-                <p className="text-xs text-outline max-w-xs">
-                  We will notify you immediately when active jobs match your location and skills.
-                </p>
+                {searchQuery ? (
+                  <>
+                    <Search className="w-12 h-12 text-zinc-400" />
+                    <p className="text-sm font-semibold text-on-surface-variant">
+                      No matching pending orders
+                    </p>
+                    <p className="text-xs text-outline max-w-xs">
+                      Try searching with different terms or check spelling.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-12 h-12 text-[#006e1c]" />
+                    <p className="text-sm font-semibold text-on-surface-variant">
+                      No new pending orders!
+                    </p>
+                    <p className="text-xs text-outline max-w-xs">
+                      We will notify you immediately when active jobs match your location and skills.
+                    </p>
+                  </>
+                )}
               </div>
             ) : (
               newOrders.map((order) => (
@@ -245,15 +305,29 @@ export default function OrdersScreen({
           <div className="space-y-4">
             {activeOrders.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center opacity-60 space-y-3">
-                <svg className="w-12 h-12 text-outline-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-2 4h.01M12 12h.01M12 16h.01" />
-                </svg>
-                <p className="text-sm font-semibold text-on-surface-variant">
-                  No active orders right now
-                </p>
-                <p className="text-xs text-outline max-w-xs">
-                  Go to the 'New' tab and click 'Accept Order' to start working on matching tasks near Kochi.
-                </p>
+                {searchQuery ? (
+                  <>
+                    <Search className="w-12 h-12 text-zinc-400" />
+                    <p className="text-sm font-semibold text-on-surface-variant">
+                      No matching active orders
+                    </p>
+                    <p className="text-xs text-outline max-w-xs">
+                      Try searching with different terms or check spelling.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-12 h-12 text-outline-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-2 4h.01M12 12h.01M12 16h.01" />
+                    </svg>
+                    <p className="text-sm font-semibold text-on-surface-variant">
+                      No active orders right now
+                    </p>
+                    <p className="text-xs text-outline max-w-xs">
+                      Go to the 'New' tab and click 'Accept Order' to start working on matching tasks near Kochi.
+                    </p>
+                  </>
+                )}
               </div>
             ) : (
               activeOrders.map((order) => (
@@ -320,10 +394,22 @@ export default function OrdersScreen({
         {activeTab === "completed" && (
           <div className="space-y-4">
             {completedOrders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center opacity-60">
-                <p className="text-sm font-semibold text-on-surface-variant">
-                  No completed history yet
-                </p>
+              <div className="flex flex-col items-center justify-center py-16 text-center opacity-60 space-y-3">
+                {searchQuery ? (
+                  <>
+                    <Search className="w-12 h-12 text-zinc-400" />
+                    <p className="text-sm font-semibold text-on-surface-variant">
+                      No matching completed orders
+                    </p>
+                    <p className="text-xs text-outline max-w-xs">
+                      Try searching with different terms or check spelling.
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm font-semibold text-on-surface-variant">
+                    No completed history yet
+                  </p>
+                )}
               </div>
             ) : (
               completedOrders.map((order) => (
