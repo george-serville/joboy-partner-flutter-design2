@@ -9,20 +9,19 @@ import {
   Phone, 
   MapPin, 
   Wrench, 
-  Shield, 
   AlertTriangle, 
   Play, 
   Pause, 
-  BadgeAlert, 
   FileCheck2, 
-  HelpCircle,
+  FileText, 
+  PhoneOff, 
+  MicOff, 
+  Volume2, 
+  Check, 
+  X,
   Car,
-  FileText,
-  PhoneOff,
-  MicOff,
-  Volume2,
-  Check,
-  X
+  Clock,
+  UserCheck
 } from "lucide-react";
 import { Screen, Order, OrderStatus } from "../types";
 
@@ -121,7 +120,7 @@ export default function OrderDetailScreen({
   return (
     <div className="flex flex-col min-h-screen bg-slate-100 text-[#0f172a] pb-32 relative">
       {/* Top Header App Bar */}
-      <header className="sticky top-0 bg-[#0ea5e9] text-white z-40 px-4 h-16 shadow-md flex items-center justify-between">
+      <header className="sticky top-0 bg-[#14A5FF] text-white z-40 px-4 h-16 shadow-md flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => onNavigate(Screen.ORDERS)}
@@ -139,8 +138,8 @@ export default function OrderDetailScreen({
               : isInProgress
               ? "bg-amber-500 text-white animate-pulse"
               : isTravelling
-              ? "bg-sky-600 text-white animate-pulse"
-              : "bg-[#0ea5e9] text-white border border-sky-300"
+              ? "bg-[#14A5FF] text-white animate-pulse"
+              : "bg-[#14A5FF] text-white border border-[#14A5FF]/30"
           }`}>
             {isCompleted ? "COMPLETED" : isInProgress ? "IN_PROGRESS" : isTravelling ? "TRAVELLING" : "ACTIVE"}
           </span>
@@ -157,7 +156,7 @@ export default function OrderDetailScreen({
           </h2>
           <div className="bg-white rounded-xl border border-zinc-200 p-4 space-y-3 shadow-xs">
             <div className="flex gap-3.5 items-center">
-              <div className="w-12 h-12 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-100 shrink-0">
+              <div className="w-12 h-12 rounded-lg bg-[rgba(20,165,255,0.08)] text-[#14A5FF] flex items-center justify-center border border-[#14A5FF]/10 shrink-0">
                 <Wrench className="w-6.5 h-6.5" />
               </div>
               <div className="space-y-0.5">
@@ -202,7 +201,7 @@ export default function OrderDetailScreen({
             <div className="flex justify-between items-center bg-slate-50 border border-zinc-150 rounded-xl p-3">
               <div className="space-y-0.5">
                 <span className="text-[9px] font-black uppercase text-zinc-400 tracking-wider">Current Milestone</span>
-                <p className="text-xs font-extrabold text-[#0ea5e9]">
+                <p className="text-xs font-extrabold text-[#14A5FF]">
                   {isCompleted 
                     ? "Job Completed successfully" 
                     : isInProgress 
@@ -234,12 +233,12 @@ export default function OrderDetailScreen({
                 disabled={isCompleted || isInProgress}
                 className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center gap-2 duration-150 cursor-pointer border-none ${
                   isTravelling 
-                    ? "bg-sky-50 text-sky-700 font-bold border border-sky-300" 
+                    ? "bg-[rgba(20,165,255,0.08)] text-[#14A5FF] font-bold border border-[#14A5FF]/30" 
                     : "bg-white hover:bg-slate-50 border border-zinc-200 text-slate-700 disabled:opacity-50"
                 }`}
               >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isTravelling ? "bg-sky-100" : "bg-zinc-100"}`}>
-                  <Car className={`w-5.5 h-5.5 ${isTravelling ? "text-sky-600" : "text-zinc-500"}`} />
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isTravelling ? "bg-[rgba(20,165,255,0.15)]" : "bg-zinc-100"}`}>
+                  <Car className={`w-5.5 h-5.5 ${isTravelling ? "text-[#14A5FF]" : "text-zinc-500"}`} />
                 </div>
                 <div className="space-y-0.5">
                   <span className="block text-xs font-extrabold leading-none">Started Travelling</span>
@@ -277,8 +276,8 @@ export default function OrderDetailScreen({
                     : "bg-white hover:bg-slate-50 border border-zinc-200 text-slate-700 disabled:opacity-50"
                 }`}
               >
-                <div className="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center font-bold">
-                  <Play className="w-5.5 h-5.5 text-sky-600 fill-sky-600" />
+                <div className="w-10 h-10 rounded-full bg-[rgba(20,165,255,0.08)] flex items-center justify-center font-bold">
+                  <Play className="w-5.5 h-5.5 text-[#14A5FF] fill-[#14A5FF]" />
                 </div>
                 <div className="space-y-0.5">
                   <span className="block text-xs font-extrabold leading-none">Start Work</span>
@@ -338,11 +337,129 @@ export default function OrderDetailScreen({
                 </div>
                 <div className="space-y-0.5">
                   <span className="block text-xs font-extrabold leading-none">Invoice</span>
-                  <span className="text-[9px] text-[#0ea5e9] font-bold uppercase tracking-wider">
+                  <span className="text-[9px] text-[#14A5FF] font-bold uppercase tracking-wider">
                     {isCompleted || invoicePaid ? "View Paid" : "Draft bill"}
                   </span>
                 </div>
               </button>
+
+            </div>
+          </div>
+        </section>
+
+        {/* ORDER TIMELINE (REQUESTED) */}
+        <section className="space-y-1.5 animate-in fade-in slide-in-from-bottom-2">
+          <h2 className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider ml-1">
+            Order Journey Timeline
+          </h2>
+          <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4 shadow-xs">
+            <div className="relative border-l border-zinc-200 ml-4 pl-6 space-y-5 py-1">
+              
+              {/* Point 1: Confirmed */}
+              <div className="relative">
+                <span className="absolute -left-[32px] top-0.5 bg-emerald-500 text-white rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-xs">
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
+                </span>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-slate-800">Booking Confirmed</p>
+                  <p className="text-[10px] text-zinc-400 font-medium">Job created successfully • 10:00 AM</p>
+                </div>
+              </div>
+
+              {/* Point 2: Accepted */}
+              <div className="relative">
+                <span className="absolute -left-[32px] top-0.5 bg-emerald-500 text-white rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-xs">
+                  <UserCheck className="w-3.5 h-3.5" />
+                </span>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-slate-800">Job Accepted</p>
+                  <p className="text-[10px] text-zinc-400 font-medium">Partner accepted task in Kochi • 10:15 AM</p>
+                </div>
+              </div>
+
+              {/* Point 3: Transit */}
+              <div className="relative">
+                <span className={`absolute -left-[32px] top-0.5 rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-xs ${
+                  isCompleted || isInProgress || isTravelling 
+                    ? "bg-emerald-500 text-white" 
+                    : "bg-zinc-200 text-zinc-400"
+                }`}>
+                  {isCompleted || isInProgress || isTravelling ? (
+                    <Car className="w-3.5 h-3.5" />
+                  ) : (
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-450" />
+                  )}
+                </span>
+                <div className="text-left">
+                  <p className={`text-xs font-bold ${isCompleted || isInProgress || isTravelling ? "text-slate-800" : "text-zinc-450"}`}>
+                    Travelling to Customer
+                  </p>
+                  <p className="text-[10px] text-zinc-400 font-medium">
+                    {isCompleted || isInProgress 
+                      ? "Arrived at destination site" 
+                      : isTravelling 
+                      ? "In transit • ETA 12 mins" 
+                      : "Awaiting departure"
+                    }
+                  </p>
+                </div>
+              </div>
+
+              {/* Point 4: Service Executed */}
+              <div className="relative">
+                <span className={`absolute -left-[32px] top-0.5 rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-xs ${
+                  isCompleted || isInProgress 
+                    ? "bg-[#14A5FF] text-white" 
+                    : "bg-zinc-200 text-zinc-400"
+                }`}>
+                  {isCompleted ? (
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  ) : isInProgress ? (
+                    <Clock className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-450" />
+                  )}
+                </span>
+                <div className="text-left">
+                  <p className={`text-xs font-bold ${isCompleted || isInProgress ? "text-slate-800" : "text-zinc-455"}`}>
+                    Work Execution
+                  </p>
+                  <p className="text-[10px] text-zinc-400 font-medium">
+                    {isCompleted 
+                      ? "Repair completed successfully" 
+                      : isInProgress 
+                      ? "Service call on site active" 
+                      : "Awaiting technician check"
+                    }
+                  </p>
+                </div>
+              </div>
+
+              {/* Point 5: Invoice Settled */}
+              <div className="relative">
+                <span className={`absolute -left-[32px] top-0.5 rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-xs ${
+                  isCompleted 
+                    ? "bg-[#14A5FF] text-white" 
+                    : "bg-zinc-200 text-zinc-400"
+                }`}>
+                  {isCompleted ? (
+                    <FileCheck2 className="w-3.5 h-3.5" />
+                  ) : (
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-450" />
+                  )}
+                </span>
+                <div className="text-left">
+                  <p className={`text-xs font-bold ${isCompleted ? "text-slate-800" : "text-zinc-450"}`}>
+                    Job Invoiced & Closed
+                  </p>
+                  <p className="text-[10px] text-zinc-400 font-medium">
+                    {isCompleted 
+                      ? "Receipt dispatched to customer" 
+                      : "Invoice pending completion"
+                    }
+                  </p>
+                </div>
+              </div>
 
             </div>
           </div>
@@ -373,9 +490,9 @@ export default function OrderDetailScreen({
               {/* Quick direct Call Button shortcut */}
               <button
                 onClick={() => setShowCallSimulator(true)}
-                className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 transition-all text-sky-600 flex items-center justify-center p-0 cursor-pointer active:scale-95 border-none shadow-xs shrink-0"
+                className="w-10 h-10 rounded-full bg-[rgba(20,165,255,0.08)] hover:bg-[rgba(20,165,255,0.15)] transition-all text-[#14A5FF] flex items-center justify-center p-0 cursor-pointer active:scale-95 border-none shadow-xs shrink-0"
               >
-                <Phone className="w-5 h-5 fill-current text-sky-600" />
+                <Phone className="w-5 h-5 fill-current text-[#14A5FF]" />
               </button>
             </div>
 
@@ -392,7 +509,7 @@ export default function OrderDetailScreen({
                   setIsTravelling(true);
                   alert(`Directing you on real-time interactive route via Kochi Bypass to: ${order.locationName}`);
                 }}
-                className="absolute bottom-2.5 right-2.5 bg-[#0ea5e9] text-white text-[10px] font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow-sm active:scale-95 duration-100 cursor-pointer border-none"
+                className="absolute bottom-2.5 right-2.5 bg-[#14A5FF] text-white text-[10px] font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow-sm active:scale-95 duration-100 cursor-pointer border-none"
               >
                 <svg className="w-3.5 h-3.5 fill-current text-white shrink-0" viewBox="0 0 24 24">
                   <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
@@ -402,7 +519,7 @@ export default function OrderDetailScreen({
             </div>
 
             <div className="flex items-start gap-2.5 text-xs text-slate-600 font-medium pt-1">
-              <MapPin className="w-4.5 h-4.5 text-sky-600 shrink-0 mt-0.5" />
+              <MapPin className="w-4.5 h-4.5 text-[#14A5FF] shrink-0 mt-0.5" />
               <p className="leading-relaxed text-slate-700/90">
                 {order.locationName}
               </p>
@@ -434,7 +551,7 @@ export default function OrderDetailScreen({
             <div className="pt-3.5 flex justify-between items-baseline">
               <span className="text-sm font-bold text-slate-800">Total Payable</span>
               <div className="text-right">
-                <span className="text-lg font-extrabold text-[#0ea5e9]">₹{order.total.toFixed(2)}</span>
+                <span className="text-lg font-extrabold text-[#14A5FF]">₹{order.total.toFixed(2)}</span>
                 <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider mt-0.5">
                   COD / Digital Pay
                 </p>
@@ -446,7 +563,7 @@ export default function OrderDetailScreen({
         {/* SPECIAL INSTRUCTIONS */}
         <section className="space-y-1.5">
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 text-xs text-amber-800 shadow-xs">
-            <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 fill-amber-50" />
+            <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 fill-amber-55" />
             <div className="space-y-1">
               <h4 className="font-bold uppercase tracking-wider text-[10px]">Special Instructions</h4>
               <p className="leading-relaxed font-semibold text-amber-900">
@@ -495,7 +612,7 @@ export default function OrderDetailScreen({
               className={`w-full text-white font-bold text-xs py-3.5 rounded-lg flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] duration-100 shadow-sm cursor-pointer border-none ${
                 isInProgress
                   ? "bg-[#006e1c] hover:bg-[#005e17]"
-                  : "bg-[#0ea5e9] hover:bg-sky-600"
+                  : "bg-[#14A5FF] hover:bg-[#14A5FF]/80"
               }`}
             >
               {isInProgress ? (
@@ -555,7 +672,7 @@ export default function OrderDetailScreen({
           <div className="bg-zinc-950 rounded-3xl p-6 text-white w-full max-w-xs h-[450px] flex flex-col justify-between shadow-2xl relative border border-zinc-850">
             {/* Call Status label */}
             <div className="text-center space-y-2 mt-4">
-              <span className="text-[9px] font-extrabold tracking-widest text-[#0ea5e9] uppercase animate-pulse">
+              <span className="text-[9px] font-extrabold tracking-widest text-[#14A5FF] uppercase animate-pulse">
                 JOBOY TELEPHONY NETWORK
               </span>
               <h4 className="text-xl font-black text-white">{order.clientName}</h4>
@@ -600,7 +717,7 @@ export default function OrderDetailScreen({
                 type="button"
                 onClick={() => setIsSpeaker(!isSpeaker)}
                 className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border border-zinc-800 cursor-pointer ${
-                  isSpeaker ? "bg-sky-500 text-white border-sky-500" : "bg-zinc-900 text-zinc-300 hover:bg-zinc-850"
+                  isSpeaker ? "bg-[#14A5FF] text-white border-[#14A5FF]" : "bg-zinc-900 text-zinc-300 hover:bg-zinc-850"
                 }`}
               >
                 <Volume2 className="w-5 h-5" />
@@ -628,7 +745,7 @@ export default function OrderDetailScreen({
           <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-2xl text-slate-900 w-full max-w-sm space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center pb-3 border-b border-zinc-100">
               <div className="text-left">
-                <span className="text-[9px] font-black uppercase text-sky-600 tracking-widest font-mono">Joboy Invoice</span>
+                <span className="text-[9px] font-black uppercase text-[#14A5FF] tracking-widest font-mono">Joboy Invoice</span>
                 <h4 className="text-sm font-bold text-slate-800 tracking-tight">TAX INVOICE</h4>
               </div>
               <button
@@ -671,7 +788,7 @@ export default function OrderDetailScreen({
               </div>
               <div className="border-t border-dashed border-zinc-200 pt-2 flex justify-between items-baseline font-bold text-sm">
                 <span className="text-slate-800">Grand Total Payable</span>
-                <span className="text-sky-600 text-semibold">₹{order.total.toFixed(2)}</span>
+                <span className="text-[#14A5FF] text-semibold font-extrabold">₹{order.total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -710,7 +827,7 @@ export default function OrderDetailScreen({
                     setInvoicePaid(true);
                     alert("Invoice marked as PAID! Underwritten via Cash-On-Delivery transaction.");
                   }}
-                  className="w-full bg-[#0ea5e9] text-white font-extrabold text-xs py-3 rounded-xl hover:bg-sky-600 cursor-pointer border-none text-center"
+                  className="w-full bg-[#14A5FF] text-white font-extrabold text-xs py-3 rounded-xl hover:bg-[#14A5FF]/90 cursor-pointer border-none text-center"
                 >
                   Mark Cash Received
                 </button>

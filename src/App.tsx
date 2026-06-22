@@ -509,7 +509,7 @@ export default function App() {
               onClick={() => handleNavigate(Screen.DASHBOARD)}
               className={`flex flex-col items-center justify-center gap-1 transition-all px-4 py-1.5 rounded-full cursor-pointer border-none bg-transparent ${
                 screen === Screen.DASHBOARD
-                  ? "bg-primary-container/15 text-[#0ea5e9]"
+                  ? "bg-primary-container/15 text-[#14A5FF]"
                   : "text-on-surface-variant hover:bg-slate-50"
               }`}
             >
@@ -522,7 +522,7 @@ export default function App() {
               onClick={() => handleNavigate(Screen.ORDERS)}
               className={`flex flex-col items-center justify-center gap-1 transition-all px-4 py-1.5 rounded-full cursor-pointer border-none bg-transparent ${
                 screen === Screen.ORDERS
-                  ? "bg-primary-container/15 text-[#0ea5e9]"
+                  ? "bg-primary-container/15 text-[#14A5FF]"
                   : "text-on-surface-variant hover:bg-slate-50"
               }`}
             >
@@ -535,7 +535,7 @@ export default function App() {
               onClick={() => handleNavigate(Screen.PROFILE)}
               className={`flex flex-col items-center justify-center gap-1 transition-all px-4 py-1.5 rounded-full cursor-pointer border-none bg-transparent ${
                 screen === Screen.PROFILE
-                  ? "bg-primary-container/15 text-[#0ea5e9]"
+                  ? "bg-primary-container/15 text-[#14A5FF]"
                   : "text-on-surface-variant hover:bg-slate-50"
               }`}
             >

@@ -93,7 +93,7 @@ export default function DashboardScreen({
     <div className="flex flex-col min-h-screen pb-24 bg-[#efefef] scroll-smooth overflow-x-hidden relative text-slate-900 font-sans">
       
       {/* Top Application Header */}
-      <header className="sticky top-0 bg-[#0ea5e9] text-white z-40 px-4 h-16 shadow-md flex items-center justify-between border-b border-light-blue-400">
+      <header className="sticky top-0 bg-[#14A5FF] text-white z-40 px-4 h-16 shadow-md flex items-center justify-between border-b border-sky-450/45">
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenMenu}
@@ -146,7 +146,7 @@ export default function DashboardScreen({
           <div>
             <h2 className="text-2xl font-black font-headline text-slate-900 tracking-tight leading-none mb-1">
               Good morning,
-              <span className="block text-sky-600 mt-1">{profile?.name || "Partner"}!</span>
+              <span className="block text-[#14A5FF] mt-1">{profile?.name || "Partner"}!</span>
             </h2>
             <p className="text-xs text-zinc-500 font-medium">Ready for a productive day in Kochi?</p>
           </div>
@@ -171,7 +171,7 @@ export default function DashboardScreen({
         {/* Metric 1 - Today's Earnings */}
         <div className="bg-white p-3 rounded-2xl border border-zinc-100 shadow-xs flex flex-col justify-between h-24">
           <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
-            <Wallet className="w-4 h-4 text-[#0ea5e9]" />
+            <Wallet className="w-4 h-4 text-[#14A5FF]" />
           </div>
           <div>
             <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Today's Earnings</p>
@@ -236,7 +236,7 @@ export default function DashboardScreen({
               </span>
               <div 
                 className={`w-4.5 rounded-t-md transition-all duration-500 ${bar.height} ${
-                  bar.highlighted ? "bg-[#0ea5e9]" : "bg-slate-100 hover:bg-slate-200"
+                  bar.highlighted ? "bg-[#14A5FF]" : "bg-slate-100 hover:bg-slate-200"
                 }`} 
               />
               <span className="text-[9px] font-extrabold text-zinc-400 tracking-tighter shrink-0">{bar.label}</span>
@@ -247,7 +247,7 @@ export default function DashboardScreen({
 
       {/* Active Job Card */}
       <section className="mx-4 mt-4">
-        <div className="bg-[#0ea5e9] p-5 rounded-2xl relative overflow-hidden shadow-md text-white border border-sky-400">
+        <div className="bg-[#14A5FF] p-5 rounded-2xl relative overflow-hidden shadow-md text-white border border-[#14A5FF]/30">
           <div className="absolute top-0 right-0 p-8 transform translate-x-4 -translate-y-4 opacity-10">
             <svg className="w-32 h-32 text-white fill-current" viewBox="0 0 24 24">
               <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.3C.5 6.7.9 9.7 2.9 11.7c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.4-2.4c.4-.4.4-1.1 0-1.4z" />
@@ -288,7 +288,7 @@ export default function DashboardScreen({
                   onSelectOrderDetail("JO-12345");
                 }
               }}
-              className="flex-grow bg-white text-sky-600 font-extrabold text-xs py-3 rounded-xl hover:bg-sky-50 shadow-sm select-none border-none cursor-pointer text-center"
+              className="flex-grow bg-white text-[#14A5FF] font-extrabold text-xs py-3 rounded-xl hover:bg-sky-50 shadow-sm select-none border-none cursor-pointer text-center"
             >
               View Details
             </button>
@@ -399,7 +399,7 @@ export default function DashboardScreen({
                 placeholder="Type your message..."
                 value={supportMessage}
                 onChange={(e) => setSupportMessage(e.target.value)}
-                className="flex-grow text-xs rounded-xl px-3 py-2.5 border border-zinc-300 focus:outline-[#0ea5e9] text-slate-800"
+                className="flex-grow text-xs rounded-xl px-3 py-2.5 border border-zinc-300 focus:outline-[#14A5FF] text-slate-800"
               />
               <button 
                 type="submit"
@@ -453,7 +453,7 @@ export default function DashboardScreen({
                     <div>
                       <h6 className="text-xs font-extrabold text-slate-800 flex items-center gap-1.5">
                         {user.name}
-                        {user.current && <span className="text-[8px] bg-sky-600 text-white px-1.5 py-0.5 rounded-full uppercase tracking-wider font-extrabold">Me</span>}
+                        {user.current && <span className="text-[8px] bg-[#14A5FF] text-white px-1.5 py-0.5 rounded-full uppercase tracking-wider font-extrabold">Me</span>}
                       </h6>
                       <p className="text-[10px] text-zinc-500 font-medium">{user.jobs} Jobs completed • ★ {user.rating}</p>
                     </div>

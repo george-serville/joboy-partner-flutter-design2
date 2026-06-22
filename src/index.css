@@ -6,11 +6,11 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   /* Custom Joboy Palette - Revamped for High Contrast Frosted Glass Theme */
-  --color-primary: #6d28d9; /* Deep violet for clear call to action */
+  --color-primary: #14A5FF; /* Vibrant sky-blue for clear call to action */
   --color-on-primary: #ffffff;
-  --color-primary-container: rgba(109, 40, 217, 0.1);
-  --color-on-primary-container: #6d28d9;
-  --color-inverse-primary: #a78bfa;
+  --color-primary-container: rgba(20, 165, 255, 0.1);
+  --color-on-primary-container: #14A5FF;
+  --color-inverse-primary: #85d5ff;
 
   --color-secondary: #047857; /* Rich readable emerald */
   --color-on-secondary: #ffffff;
@@ -171,7 +171,7 @@ nav button {
   color: rgba(15, 23, 42, 0.6) !important;
 }
 nav button.text-primary, nav button svg.text-primary {
-  color: #6d28d9 !important;
+  color: #14A5FF !important;
 }
 
 /* Soft badges and tags */
@@ -211,11 +211,11 @@ nav button.text-primary, nav button svg.text-primary {
 }
 
 .text-primary {
-  color: #6d28d9 !important; /* strong violet */
+  color: #14A5FF !important; /* strong sky-blue */
 }
 
 .text-on-primary-container {
-  color: #6d28d9 !important;
+  color: #14A5FF !important;
 }
 
 /* Ensure modally active overlay matches the backdrop filter specification */
