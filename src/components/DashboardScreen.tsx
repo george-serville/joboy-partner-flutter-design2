@@ -18,7 +18,11 @@ import {
   Navigation,
   X,
   Send,
-  UserCheck
+  UserCheck,
+  Check,
+  MapPin,
+  Clock,
+  AlertCircle
 } from "lucide-react";
 import { Screen, Order, PartnerProfile, OrderStatus } from "../types";
 
@@ -31,6 +35,8 @@ interface DashboardScreenProps {
   onSelectOrderDetail: (orderId: string) => void;
   onToggleNotifications: () => void;
   unreadNotificationsCount: number;
+  onAcceptOrder: (orderId: string) => void;
+  onDeclineOrder: (orderId: string) => void;
 }
 
 export default function DashboardScreen({
@@ -42,6 +48,8 @@ export default function DashboardScreen({
   onSelectOrderDetail,
   onToggleNotifications,
   unreadNotificationsCount,
+  onAcceptOrder,
+  onDeclineOrder,
 }: DashboardScreenProps) {
   const [isAvailable, setIsAvailable] = useState(true);
   const [showSupportModal, setShowSupportModal] = useState(false);
@@ -251,6 +259,111 @@ export default function DashboardScreen({
               {orders.filter(o => o.status === OrderStatus.COMPLETED).length} Done
             </span>
           </button>
+        </div>
+      </section>
+
+      {/* Incoming Job Requests Pool */}
+      <section className="mx-4 mb-4 bg-white p-4 rounded-2xl border border-zinc-150 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-widest pl-0.5">
+              Incoming Job Requests ({orders.filter(o => o.status === OrderStatus.NEW).length})
+            </h3>
+          </div>
+          <span className="text-[9px] bg-sky-50 text-sky-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider font-mono">
+            Kochi-West Region
+          </span>
+        </div>
+
+        <div className="space-y-3">
+          {orders.filter(o => o.status === OrderStatus.NEW).length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center bg-slate-50/50 rounded-xl border border-dashed border-zinc-200">
+              <AlertCircle className="w-8 h-8 text-slate-300 stroke-[1.5] mb-2" />
+              <p className="text-xs font-bold text-slate-700">Waiting for nearby bookings</p>
+              <p className="text-[10px] text-zinc-400 max-w-[240px] leading-relaxed mt-0.5">
+                You are currently active and available. Incoming orders matching your registered skill-sets will stream here in real-time.
+              </p>
+            </div>
+          ) : (
+            orders.filter(o => o.status === OrderStatus.NEW).map((order) => {
+              const customerEstimate = order.total || (order.inspectionFee + order.materialCost);
+              return (
+                <div
+                  key={order.id}
+                  onClick={() => onSelectOrderDetail(order.id)}
+                  className="bg-white rounded-xl border border-zinc-150 hover:border-zinc-250 p-3.5 space-y-3 transition-all cursor-pointer shadow-xs hover:shadow-md animate-in fade-in"
+                >
+                  {/* Category Header & Payout Estimate */}
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-0.5">
+                      <span className="text-[8px] bg-sky-50 text-[#14A5FF] font-black px-2 py-0.5 rounded-md uppercase tracking-wide font-mono">
+                        {order.id}
+                      </span>
+                      <h4 className="text-sm font-black text-slate-800 tracking-tight leading-tight">
+                        {order.serviceType}
+                      </h4>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-black text-emerald-600">
+                        ₹{customerEstimate.toLocaleString('en-IN')}
+                      </p>
+                      <span className="text-[8px] text-zinc-400 font-bold uppercase font-mono tracking-wider">Est. Payout</span>
+                    </div>
+                  </div>
+
+                  {/* Core parameters with Lucide Icons */}
+                  <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-600 font-semibold border-t border-b border-dashed border-zinc-100 py-2.5">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                      <span className="truncate">{order.locationName} ({order.distance})</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 min-w-0 justify-end">
+                      <Clock className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                      <span className="truncate text-right">{order.timeSlot}</span>
+                    </div>
+                  </div>
+
+                  {/* Instructions Brief info */}
+                  <div className="bg-slate-50 rounded-lg p-2 text-[10px] text-zinc-500 font-medium">
+                    <p className="line-clamp-2">
+                       <span className="font-bold text-slate-700 uppercase tracking-tighter mr-1 text-[8px] font-mono">Note:</span> 
+                       {order.instructions || "Standard partner diagnostics required. Contact client when dispatching."}
+                    </p>
+                  </div>
+
+                  {/* Approve or Reject buttons - Core User Intent */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeclineOrder(order.id);
+                      }}
+                      className="cursor-pointer bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 font-bold text-xs py-2 rounded-lg border border-rose-200/50 transition-all text-center flex items-center justify-center gap-1 active:scale-95 shrink-0"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      Reject
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAcceptOrder(order.id);
+                      }}
+                      className="cursor-pointer bg-[#006e1c] hover:bg-[#005214] text-white font-black text-xs py-2 rounded-lg border-none shadow-sm transition-all text-center flex items-center justify-center gap-1 active:scale-95 shrink-0"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      Approve
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
 

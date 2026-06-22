@@ -470,6 +470,8 @@ export default function App() {
                 setSelectedOrderId(id);
                 handleNavigate(Screen.ORDER_DETAIL);
               }}
+              onAcceptOrder={handleAcceptOrder}
+              onDeclineOrder={handleDeclineOrder}
               onToggleNotifications={() => setIsNotificationsOpen(!isNotificationsOpen)}
               unreadNotificationsCount={notifications.filter((n) => !n.read).length}
             />
