@@ -1,0 +1,6 @@
+{
+  "name": "Joboy Partner",
+  "description": "Professional Service Network App for Joboy Partners to manage service requests, accept active tasks, view live order details, and track earning history.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
