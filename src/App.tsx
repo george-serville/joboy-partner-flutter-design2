@@ -244,6 +244,12 @@ export default function App() {
     }
   };
 
+  // Profile fields updater handler
+  const handleUpdateProfile = (updated: PartnerProfile) => {
+    setProfile(updated);
+    saveState(orders, transactions, updated, totalEarnings);
+  };
+
   // Cash-out balance transfer handler
   const handleWithdraw = (amount: number) => {
     const updatedEarnings = totalEarnings - amount;
@@ -334,6 +340,7 @@ export default function App() {
               onLogout={handleLogout}
               onUpdateSubscription={handleUpdateSubscription}
               onUpdateLocation={handleUpdateLocation}
+              onUpdateProfile={handleUpdateProfile}
               onOpenMenu={() => setIsMenuOpen(true)}
             />
           )}

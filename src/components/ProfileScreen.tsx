@@ -23,6 +23,7 @@ import {
   LogOut,
   HelpCircle,
   Menu,
+  X,
 } from "lucide-react";
 import { Screen, PartnerProfile } from "../types";
 
@@ -32,6 +33,7 @@ interface ProfileScreenProps {
   onLogout: () => void;
   onUpdateSubscription: (amount: number) => void;
   onUpdateLocation: (newLocation: string) => void;
+  onUpdateProfile: (updated: PartnerProfile) => void;
   onOpenMenu?: () => void;
 }
 
@@ -41,12 +43,84 @@ export default function ProfileScreen({
   onLogout,
   onUpdateSubscription,
   onUpdateLocation,
+  onUpdateProfile,
   onOpenMenu,
 }: ProfileScreenProps) {
   const [reportsOpen, setReportsOpen] = useState(false);
   const [showAadhaar, setShowAadhaar] = useState(false);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscriptionInput, setSubscriptionInput] = useState("500");
+
+  // Edit Profile form states
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(profile.name);
+  const [editEmail, setEditEmail] = useState(profile.email);
+  const [editPhone, setEditPhone] = useState(profile.phone);
+  const [editAadhaar, setEditAadhaar] = useState(profile.aadhaarNumber);
+  const [editServices, setEditServices] = useState<string[]>(profile.offeredServices);
+  const [editCities, setEditCities] = useState<string[]>(profile.coveredCities);
+
+  const ALL_SERVICES = ["AC Repair", "Electrician", "Plumbing", "Home Cleaning", "Carpentry"];
+  const ALL_CITIES = ["Kochi", "Kakkanad", "Edappally", "Aluva", "Tripunithura"];
+
+  const handleOpenEdit = () => {
+    setEditName(profile.name);
+    setEditEmail(profile.email);
+    setEditPhone(profile.phone);
+    setEditAadhaar(profile.aadhaarNumber);
+    setEditServices(profile.offeredServices);
+    setEditCities(profile.coveredCities);
+    setIsEditing(true);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editName.trim()) {
+      alert("Please provide a valid name.");
+      return;
+    }
+    if (!editEmail.trim() || !editEmail.includes("@")) {
+      alert("Please provide a valid email address.");
+      return;
+    }
+    if (!editPhone.trim()) {
+      alert("Please provide a valid contact phone number.");
+      return;
+    }
+    if (!editAadhaar.trim()) {
+      alert("Please provide a valid Aadhaar reference.");
+      return;
+    }
+
+    onUpdateProfile({
+      ...profile,
+      name: editName.trim(),
+      email: editEmail.trim(),
+      phone: editPhone.trim(),
+      aadhaarNumber: editAadhaar.trim(),
+      offeredServices: editServices,
+      coveredCities: editCities,
+    });
+
+    setIsEditing(false);
+    alert("Profile configurations updated!");
+  };
+
+  const toggleService = (service: string) => {
+    if (editServices.includes(service)) {
+      setEditServices(editServices.filter((s) => s !== service));
+    } else {
+      setEditServices([...editServices, service]);
+    }
+  };
+
+  const toggleCity = (city: string) => {
+    if (editCities.includes(city)) {
+      setEditCities(editCities.filter((c) => c !== city));
+    } else {
+      setEditCities([...editCities, city]);
+    }
+  };
 
   const handleSubSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,6 +208,15 @@ export default function ProfileScreen({
               <Mail className="w-3.5 h-3.5 text-primary" />
               {profile.email}
             </span>
+          </div>
+          <div className="pt-2">
+            <button
+              onClick={handleOpenEdit}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary/10 text-primary text-[10px] font-black hover:bg-primary/20 transition-all cursor-pointer active:scale-95 border-none outline-none"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>Edit Profile Details</span>
+            </button>
           </div>
         </div>
       </div>
@@ -413,6 +496,158 @@ export default function ProfileScreen({
                   className="w-1/2 cursor-pointer bg-primary text-white font-bold text-xs py-2 rounded-lg hover:opacity-90 transition-all"
                 >
                   Confirm Payout
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Dialog Modal */}
+      {isEditing && (
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-5 border border-outline-variant/30 shadow-lg text-on-surface w-full max-w-sm max-h-[90%] overflow-y-auto space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-150 pb-2.5">
+              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">
+                Edit Partner Profile
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="p-1 rounded-full hover:bg-zinc-100 transition-colors text-zinc-400 hover:text-zinc-600 border-none cursor-pointer"
+                aria-label="Close Modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              {/* Full Name Input */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1 font-mono">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full bg-slate-50 hover:bg-slate-100/55 focus:bg-white border border-zinc-250 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:ring-1.5 focus:ring-[#14A5FF] focus:border-[#14A5FF] transition-all"
+                  placeholder="Enter full name"
+                  required
+                />
+              </div>
+
+              {/* Email Address Input */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1 font-mono">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  className="w-full bg-slate-50 hover:bg-slate-100/55 focus:bg-white border border-zinc-250 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:ring-1.5 focus:ring-[#14A5FF] focus:border-[#14A5FF] transition-all"
+                  placeholder="name@joboy.in"
+                  required
+                />
+              </div>
+
+              {/* Phone Line Input */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1 font-mono">
+                  Contact Line
+                </label>
+                <input
+                  type="text"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  className="w-full bg-slate-50 hover:bg-slate-100/55 focus:bg-white border border-zinc-250 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:ring-1.5 focus:ring-[#14A5FF] focus:border-[#14A5FF] transition-all"
+                  placeholder="e.g. +91 99460 12345"
+                  required
+                />
+              </div>
+
+              {/* Aadhaar Reference Number */}
+              <div className="space-y-1.5 text-left">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1 font-mono">
+                  Aadhaar Reference (UIDAI)
+                </label>
+                <input
+                  type="text"
+                  value={editAadhaar}
+                  onChange={(e) => setEditAadhaar(e.target.value)}
+                  className="w-full bg-slate-50 hover:bg-slate-100/55 focus:bg-white border border-zinc-250 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:ring-1.5 focus:ring-[#14A5FF] focus:border-[#14A5FF] transition-all"
+                  placeholder="XXXX-XXXX-XXXX"
+                  required
+                />
+              </div>
+
+              {/* Skill Services Multi-Pill Select */}
+              <div className="space-y-2 text-left">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1 font-mono">
+                  Skill Services Offered
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {ALL_SERVICES.map((srv) => {
+                    const isSelected = editServices.includes(srv);
+                    return (
+                      <button
+                        type="button"
+                        key={srv}
+                        onClick={() => toggleService(srv)}
+                        className={`text-[10px] font-bold px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-primary border-primary text-white"
+                            : "bg-slate-50 border-zinc-200 text-slate-600 hover:bg-slate-100"
+                        }`}
+                      >
+                        {srv}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Covered Cities Multi-Pill Select */}
+              <div className="space-y-2 text-left">
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider pl-1 font-mono">
+                  Service Cities Covered
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {ALL_CITIES.map((city) => {
+                    const isSelected = editCities.includes(city);
+                    return (
+                      <button
+                        type="button"
+                        key={city}
+                        onClick={() => toggleCity(city)}
+                        className={`text-[10px] font-bold px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-[#006e1c] border-[#006e1c] text-white"
+                            : "bg-slate-50 border-zinc-200 text-slate-600 hover:bg-slate-100"
+                        }`}
+                      >
+                        {city}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Actions Footer */}
+              <div className="flex gap-2.5 pt-3 border-t border-zinc-150">
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="w-1/2 cursor-pointer bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold text-xs py-2.5 rounded-xl border-none transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-1/2 cursor-pointer bg-[#14A5FF] hover:bg-[#118fdc] text-white font-bold text-xs py-2.5 rounded-xl border-none shadow-sm transition-all"
+                >
+                  Save Changes
                 </button>
               </div>
             </form>
